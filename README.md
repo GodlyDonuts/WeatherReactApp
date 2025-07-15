@@ -70,4 +70,4 @@ MIT
 
 ---
 
-> Made with ❤️ by [Your Name] — feel free to use, modify, and share!
+> Made with ❤️ by Saicharan Ramineni — feel free to use, modify, and share!
