@@ -23,14 +23,24 @@ body {
 
 .weather-app {
   background: #fff;
-  border-radius: 16px;
+  border-radius: 20px;
   padding: 2.5rem 2rem 2rem 2rem;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.07);
-  max-width: 400px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  max-width: 420px;
   width: 100%;
+  min-height: 400px;
+  max-height: 90vh;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-start;
+  overflow: hidden;
+  transition: max-width 0.3s cubic-bezier(.4,1.4,.6,1), min-width 0.3s cubic-bezier(.4,1.4,.6,1);
+}
+
+.weather-app.wide {
+  max-width: 700px;
+  min-width: 520px;
 }
 
 .weather-app h1 {
@@ -41,39 +51,70 @@ body {
 }
 
 .weather-form {
-  display: flex;
-  gap: 0.5rem;
   width: 100%;
-  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #fff;
+  padding-bottom: 1.5rem;
+  margin-top: 1.2rem;
+  margin-bottom: 1.2rem;
+}
+.search-bar-group {
+  display: flex;
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+}
+.weather-form input, .weather-form button {
+  height: 48px;
+  box-sizing: border-box;
+  line-height: 1.2;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin: 0;
+  vertical-align: middle;
 }
 .weather-form input {
-  flex: 1;
-  padding: 0.7rem 1rem;
-  font-size: 1rem;
-  border-radius: 8px;
-  border: 1.5px solid #d1d5db;
-  background: #f9fafb;
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 0 1.1rem;
+  font-size: 1.08rem;
+  border: 1.5px solid #e0e0e0;
+  border-right: none;
+  border-radius: 999px 0 0 999px;
+  background: #f8fafc;
   color: #222;
   outline: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
   transition: border 0.2s, box-shadow 0.2s;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
 }
 .weather-form input:focus {
   border: 1.5px solid #2563eb;
-  box-shadow: 0 0 0 2px #2563eb22;
+  border-right: none;
   background: #fff;
+  box-shadow: 0 0 0 2px #2563eb22;
 }
 .weather-form button {
-  padding: 0.7rem 1.2rem;
-  font-size: 1rem;
-  border-radius: 8px;
-  border: none;
+  flex: 0 0 auto;
+  padding: 0 1.5rem;
+  font-size: 1.08rem;
+  border-radius: 0 999px 999px 0;
+  border: 1.5px solid #2563eb;
+  border-left: none;
   background: #2563eb;
   color: #fff;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.2s, box-shadow 0.2s;
   box-shadow: 0 2px 8px rgba(37,99,235,0.07);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .weather-form button:hover, .weather-form button:focus {
   background: #1741a6;
@@ -120,6 +161,165 @@ body {
   letter-spacing: 0.2px;
 }
 
+.hourly-list {
+  flex: 1 1 auto;
+  width: 100%;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+  max-height: 48vh;
+}
+
+.hourly-list h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+  text-align: left;
+  padding-left: 0.2rem;
+}
+
+.hourly-list ul {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+.hourly-list li {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  background: #f8fafc;
+  border-bottom: 1px solid #ececec;
+  font-size: 1.05rem;
+  transition: background 0.2s;
+}
+
+.hourly-list li:nth-child(even) {
+  background: #f3f4f6;
+}
+
+.hourly-list li.current-hour {
+  background: #e0e7ff;
+  font-weight: 600;
+}
+
+.hourly-list li.perfect-pickleball {
+  background: #e6fbe8;
+  border-left: 4px solid #22c55e;
+  position: relative;
+}
+.hourly-list li.current-hour.perfect-pickleball {
+  background: linear-gradient(90deg, #e0e7ff 60%, #e6fbe8 100%);
+  border-left: 4px solid #22c55e;
+}
+.pickleball-badge {
+  background: #22c55e;
+  color: #fff;
+  font-size: 0.78em;
+  font-weight: 700;
+  border-radius: 6px;
+  padding: 2px 8px;
+  margin-left: 10px;
+  display: inline-block;
+  vertical-align: middle;
+  letter-spacing: 0.02em;
+}
+
+.hourly-list span {
+  display: inline-block;
+}
+
+.hourly-list .hour-time {
+  min-width: 70px;
+  font-variant-numeric: tabular-nums;
+  color: #222;
+}
+
+.hourly-list .hour-temp {
+  min-width: 60px;
+  font-weight: 600;
+  color: #2563eb;
+}
+
+.hourly-list .hour-precip {
+  min-width: 70px;
+  color: #059669;
+  font-weight: 500;
+}
+
+.day-selector {
+  width: 100%;
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  margin-bottom: 0.5rem;
+  gap: 8px;
+  padding-bottom: 4px;
+  padding-left: 4px;
+  padding-right: 4px;
+  scrollbar-width: none;
+}
+.day-selector::-webkit-scrollbar {
+  display: none;
+}
+.day-selector button {
+  white-space: nowrap;
+  min-width: 56px;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+}
+
+.temp-range-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  margin: 0 auto 1.2rem auto;
+  width: 100%;
+  max-width: 420px;
+}
+.temp-range-label {
+  font-weight: 500;
+  margin-right: 0.5rem;
+}
+.temp-range-input {
+  width: 60px;
+  border-radius: 999px;
+  border: 1.5px solid #e0e0e0;
+  background: #f8fafc;
+  color: #222;
+  padding: 0.5rem 0.9rem;
+  font-size: 1.08rem;
+  outline: none;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  text-align: center;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+.temp-range-input:focus {
+  border: 1.5px solid #2563eb;
+  background: #fff;
+  box-shadow: 0 0 0 2px #2563eb22;
+}
+.temp-range-input::-webkit-outer-spin-button,
+.temp-range-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.temp-range-input[type=number] {
+  -moz-appearance: textfield;
+}
+.temp-range-sep {
+  font-weight: 600;
+  font-size: 1.2em;
+  margin: 0 0.2rem;
+}
+.temp-range-unit {
+  margin-left: 0.5rem;
+  font-size: 1.08rem;
+}
+
 @media (max-width: 500px) {
   .weather-app {
     padding: 1.2rem 0.5rem 1.5rem 0.5rem;
@@ -131,5 +331,83 @@ body {
   }
   .weather-result {
     padding: 1rem 0.3rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .weather-app, .weather-app.wide {
+    max-width: 98vw;
+    min-width: unset;
+    padding: 0.7rem 0.7rem 1rem 0.7rem;
+    border-radius: 10px;
+  }
+  .search-bar-group {
+    flex-direction: column;
+    max-width: 100%;
+    width: 100%;
+    gap: 0.5rem;
+    margin-top: 1.2rem;
+    margin-bottom: 1.2rem;
+    box-shadow: none;
+    border-radius: 0;
+    background: none;
+    padding: 0;
+  }
+  .weather-form {
+    padding-bottom: 0.5rem;
+  }
+  .weather-form input, .weather-form button {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    height: 44px;
+    font-size: 1rem;
+    margin: 0 0 0.5rem 0;
+    border-radius: 8px;
+  }
+  .weather-form input {
+    border-bottom: 1.5px solid #e0e0e0;
+  }
+  .weather-form button {
+    border: 1.5px solid #2563eb;
+    margin-top: 0;
+  }
+  .hourly-list {
+    max-height: 38vh;
+    font-size: 0.98rem;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  .hourly-list li {
+    padding: 0.5rem 0.3rem;
+    font-size: 0.98rem;
+  }
+  .hourly-list h3 {
+    font-size: 1.05rem;
+    margin-bottom: 0.7rem;
+    margin-top: 0.7rem;
+    text-align: left;
+    padding-left: 0.2rem;
+    padding-right: 0.2rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .day-selector {
+    gap: 4px;
+    font-size: 0.97rem;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    padding-left: 12px;
+    padding-right: 12px;
+    scrollbar-width: none;
+  }
+  .day-selector::-webkit-scrollbar {
+    display: none;
+  }
+  .day-selector button {
+    min-width: 54px;
+    font-size: 0.98rem;
+    padding: 0.45rem 0.7rem;
   }
 }
