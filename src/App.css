@@ -99,8 +99,15 @@ body {
 }
 .weather-result img {
   margin-top: 0.5rem;
-  width: 64px;
-  height: 64px;
+  width: 80px;
+  height: 80px;
+  background: none;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+  display: inline-block;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.18));
 }
 
 .error {

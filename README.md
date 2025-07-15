@@ -12,15 +12,6 @@ A modern, minimalistic React app to check the weather for any location by zipcod
 - 🔒 API key managed securely via environment variables
 
 ---
-
-## 📸 Screenshots
-<!--
-Add screenshots here after running the app!
-![WeatherReactApp Screenshot](screenshot.png)
--->
-
----
-
 ## 🚀 Getting Started
 
 ### 1. **Clone the repository**

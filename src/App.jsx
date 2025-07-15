@@ -8,26 +8,53 @@ function App() {
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [fallbackUsed, setFallbackUsed] = useState(false);
 
   const getWeather = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
     setWeather(null);
+    setFallbackUsed(false);
     let url = '';
     // If input is all digits, treat as zipcode
     if (/^\d{5}$/.test(query.trim())) {
       url = `https://api.openweathermap.org/data/2.5/weather?zip=${query.trim()}&appid=${API_KEY}&units=metric`;
     } else {
       // Use Geocoding API to get lat/lon for address
-      const geoUrl = `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(query.trim())}&limit=1&appid=${API_KEY}`;
+      let address = query.trim();
+      let geoUrl = `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(address)}&limit=1&appid=${API_KEY}`;
+      let geoData = [];
       try {
-        const geoRes = await fetch(geoUrl);
-        const geoData = await geoRes.json();
+        let geoRes = await fetch(geoUrl);
+        geoData = await geoRes.json();
         if (!geoRes.ok || !geoData.length) {
-          setError('Address not found.');
-          setLoading(false);
-          return;
+          // Fallback: try removing street if address has commas and numbers
+          if (address.includes(',') && /\d/.test(address)) {
+            // Remove everything before the first comma
+            const parts = address.split(',');
+            if (parts.length > 1) {
+              const fallbackAddress = parts.slice(1).join(',').trim();
+              geoUrl = `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(fallbackAddress)}&limit=1&appid=${API_KEY}`;
+              geoRes = await fetch(geoUrl);
+              geoData = await geoRes.json();
+              if (geoRes.ok && geoData.length) {
+                setFallbackUsed(true);
+              } else {
+                setError('Address not found. Try city, state, or zipcode.');
+                setLoading(false);
+                return;
+              }
+            } else {
+              setError('Address not found. Try city, state, or zipcode.');
+              setLoading(false);
+              return;
+            }
+          } else {
+            setError('Address not found. Try city, state, or zipcode.');
+            setLoading(false);
+            return;
+          }
         }
         const { lat, lon } = geoData[0];
         url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
@@ -65,8 +92,16 @@ function App() {
         />
         <button type="submit">Get Weather</button>
       </form>
+      <p style={{fontSize: '0.98rem', color: '#666', margin: '0 0 1.2rem 0', maxWidth: 340}}>
+        <strong>Note:</strong> Full street addresses may not always work. For best results, use city, state, or zipcode. If you get an error, try simplifying your input.
+      </p>
       {loading && <p>Loading...</p>}
       {error && <p className="error">{error}</p>}
+      {fallbackUsed && (
+        <p style={{fontSize: '0.97rem', color: '#2563eb', margin: '0 0 1rem 0', maxWidth: 340}}>
+          The full address could not be found. Showing weather for the broader area instead.
+        </p>
+      )}
       {weather && (
         <div className="weather-result">
           <h2>{weather.name}, {weather.sys?.country}</h2>
