@@ -6,9 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "gh-pages -d dist"
   },
+  "homepage": "https://GodlyDonuts.github.io/WeatherReactApp",
   "dependencies": {
     "gh-pages": "^6.3.0",
     "react": "^19.1.0",
