@@ -1,16 +1,17 @@
-# 🏓 Pickleball Weather App
+# 🌤️ Weather Search App
 
-A modern, responsive web app to find the best times to play pickleball based on weather conditions in your area. Powered by LocationIQ for geolocation and Open-Meteo for weather data.
+A modern, responsive web application for searching and viewing detailed weather forecasts. Built with React and Vite, featuring location autocomplete, multi-day hourly forecasts, and customizable temperature preferences.
 
 ---
 
 ## ✨ Features
-- 🔍 **Location Autocomplete:** Fast, US-only address search with LocationIQ
-- 📅 **Multi-day Forecast:** See hourly weather for today and the next 6 days
-- 🟢 **Perfect Pickleball Hours:** Highlights hours with ideal temperature and no recent rain
-- 🌡️ **Custom Temperature Range:** Adjust what you consider "perfect" for pickleball
-- 📱 **Mobile-friendly:** Clean, modern, and fully responsive UI
-- ⚡ **Fast:** Built with React + Vite
+- 🔍 **Smart Location Search:** Real-time autocomplete with LocationIQ API
+- 📅 **7-Day Hourly Forecast:** Detailed weather data for today and the next 6 days
+- 🌡️ **Customizable Temperature Range:** Set your preferred temperature range for ideal conditions
+- 💨 **Wind Speed Data:** View wind conditions alongside temperature and precipitation
+- 📱 **Mobile-First Design:** Fully responsive interface optimized for all devices
+- ⚡ **Fast Performance:** Built with React 19 and Vite for optimal speed
+- 🚀 **Deployed:** Live on GitHub Pages
 
 ---
 
@@ -18,7 +19,7 @@ A modern, responsive web app to find the best times to play pickleball based on 
 
 ### 1. **Clone the repository**
 ```bash
-git clone https://github.com/yourusername/WeatherReactApp.git
+git clone https://github.com/GodlyDonuts/WeatherReactApp.git
 cd WeatherReactApp
 ```
 
@@ -27,12 +28,11 @@ cd WeatherReactApp
 npm install
 ```
 
-### 3. **Set up environment variables**
-- **LocationIQ:** No .env needed for the provided public key (see below)
-- **Open-Meteo:** No API key required
-- **If you want to use your own LocationIQ key:**
-  - Get one at [LocationIQ](https://locationiq.com/)
-  - Replace the key in `src/App.jsx` (`LOCATIONIQ_KEY`)
+### 3. **Set up environment variables (optional)**
+- **LocationIQ:** Uses a public key by default, but you can use your own:
+  - Get a free key at [LocationIQ](https://locationiq.com/)
+  - Create a `.env` file and add: `VITE_LOCATIONIQ_KEY=your_key_here`
+- **Open-Meteo:** No API key required (free weather data)
 
 ### 4. **Start the development server**
 ```bash
@@ -40,40 +40,76 @@ npm run dev
 ```
 Visit [http://localhost:5173](http://localhost:5173) in your browser.
 
+### 5. **Build for production**
+```bash
+npm run build
+```
+
+### 6. **Deploy to GitHub Pages**
+```bash
+npm run deploy
+```
+
 ---
 
-## 🛠️ Customization
-- **Styling:** Edit `src/App.css` for colors, layout, and fonts.
-- **Weather logic:** Main logic is in `src/App.jsx`.
-- **API endpoints:**
-  - LocationIQ Autocomplete: `https://api.locationiq.com/v1/autocomplete`
-  - LocationIQ Search: `https://us1.locationiq.com/v1/search`
-  - Open-Meteo: `https://api.open-meteo.com/v1/forecast`
-- **Environment variables:** Only needed if you want to use your own LocationIQ key.
+## 🛠️ Features in Detail
+
+### **Location Search**
+- Real-time autocomplete as you type
+- Supports cities, zip codes, and addresses
+- US-focused location search
+- Fallback search for broader area matching
+
+### **Weather Data**
+- **Temperature:** Current and forecasted temperatures in Fahrenheit
+- **Precipitation:** Hourly precipitation amounts in inches
+- **Wind Speed:** Wind conditions in mph (converted from m/s)
+- **7-Day Forecast:** Hourly data for today plus 6 days ahead
+
+### **Customization**
+- **Temperature Range:** Adjust minimum and maximum temperature preferences
+- **Day Selection:** Click between different days to view hourly forecasts
+- **Mobile Responsive:** Optimized layout for phones and tablets
 
 ---
 
 ## 🧩 Tech Stack
-- [React](https://react.dev/) (with Hooks)
-- [Vite](https://vitejs.dev/) (for fast dev/build)
+- [React 19](https://react.dev/) (with Hooks)
+- [Vite](https://vitejs.dev/) (fast development and build)
 - [LocationIQ](https://locationiq.com/) (geocoding & autocomplete)
-- [Open-Meteo](https://open-meteo.com/) (weather data)
-- Modern CSS (no frameworks)
+- [Open-Meteo](https://open-meteo.com/) (free weather data API)
+- [GitHub Pages](https://pages.github.com/) (deployment)
+- Modern CSS (responsive design, no frameworks)
+
+---
+
+## 📱 Live Demo
+Visit the live application: [Weather Search App](https://GodlyDonuts.github.io/WeatherReactApp/)
+
+---
+
+## 🚀 Deployment
+The app is automatically deployed to GitHub Pages. The `gh-pages` package is configured for easy deployment:
+
+```bash
+npm run deploy
+```
 
 ---
 
 ## 🤝 Contributing
-1. Fork this repo
-2. Create a new branch (`git checkout -b feature/your-feature`)
+1. Fork this repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
 3. Make your changes
-4. Commit and push (`git commit -am 'Add new feature' && git push`)
-5. Open a Pull Request
+4. Commit your changes (`git commit -m 'Add amazing feature'`)
+5. Push to the branch (`git push origin feature/amazing-feature`)
+6. Open a Pull Request
 
 ---
 
 ## 📄 License
-MIT
+MIT License - feel free to use this project for your own weather applications!
 
 ---
 
-> Made with ❤️ for pickleball players everywhere!
+> Built with ❤️ using React and modern web technologies
