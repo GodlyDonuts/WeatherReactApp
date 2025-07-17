@@ -1,7 +1,18 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import './App.css'
 
 const LOCATIONIQ_KEY = import.meta.env.VITE_LOCATIONIQ_KEY;
+// Custom hook to detect mobile
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 500);
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 500);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  return isMobile;
+}
+
 function App() {
   const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(false);
@@ -14,6 +25,7 @@ function App() {
   const [suggestions, setSuggestions] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(null); // {lat, lon, display_name}
   const autocompleteTimeout = useRef(null);
+  const isMobile = useIsMobile();
 
   // Autocomplete as user types
   const handleInputChange = (e) => {
@@ -219,10 +231,13 @@ function App() {
             })}
           </div>
           <div className="hourly-list">
-            <h3 style={{marginTop: '1rem', marginBottom: '0.5rem'}}>
-              Hourly Temperature & Precipitation ({getDayLabel(hourlyByDay[selectedDay].date, selectedDay)})
-            </h3>
             <ul style={{listStyle: 'none', padding: 0, margin: 0}}>
+              <li className="hourly-header">
+                <span className="hour-time">Time</span>
+                <span className="hour-temp">Temp</span>
+                <span className="hour-precip">Precip</span>
+                { !isMobile && <span className="hour-badge"></span> }
+              </li>
               {(() => {
                 const hours = hourlyByDay[selectedDay].hours;
                 let prevRained = false;
@@ -236,10 +251,10 @@ function App() {
                   const liClass = `${isCurrentHour ? 'current-hour' : ''} ${isPerfect ? 'perfect-pickleball' : ''}`.trim();
                   return (
                     <li key={h.time} className={liClass}>
-                      <span className="hour-time">{new Date(h.time).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}</span>
+                      <span className="hour-time">{new Date(h.time).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit', hour12: true}).replace(' ', '\u00A0')}</span>
                       <span className="hour-temp">{Math.round(tempF)}°F</span>
                       <span className="hour-precip">{(h.precip / 25.4).toFixed(2)} in</span>
-                      {isPerfect && (
+                      {isPerfect && !isMobile && (
                         <span className="pickleball-badge">Perfect for Pickleball!</span>
                       )}
                     </li>
