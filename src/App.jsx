@@ -8,7 +8,7 @@ function App() {
   const [error, setError] = useState('');
   const [fallbackUsed, setFallbackUsed] = useState(false);
   const [hourlyByDay, setHourlyByDay] = useState([]); // [{date, hours: [{time, temp, precip, wind}]}]
-  const [selectedDay, setSelectedDay] = useState(0); // 0 = today
+  const [selectedDay, setSelectedDay] = useState(1); // 0 = today
   const [minTempF, setMinTempF] = useState(65);
   const [maxTempF, setMaxTempF] = useState(85);
   const [suggestions, setSuggestions] = useState([]);
@@ -93,7 +93,11 @@ function App() {
             });
           });
           const days = Object.keys(byDay).sort().map(date => ({ date, hours: byDay[date] }));
-          setHourlyByDay(days);
+          // Find the index of today in the days array
+          const todayIdx = days.findIndex(d => new Date(d.date).getDay() === todayDayOfWeek);
+          // Reorder so today is first, then the next 6 days
+          const reordered = todayIdx > -1 ? days.slice(todayIdx).concat(days.slice(0, todayIdx)) : days;
+          setHourlyByDay(reordered);
         }
       } catch (err) {
         // Ignore hourly errors for now
@@ -102,17 +106,36 @@ function App() {
     setLoading(false);
   };
 
+  // Days of week enum
+  const DaysOfWeek = Object.freeze({
+    SUNDAY: 0,
+    MONDAY: 1,
+    TUESDAY: 2,
+    WEDNESDAY: 3,
+    THURSDAY: 4,
+    FRIDAY: 5,
+    SATURDAY: 6,
+  });
+  const DAYS_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
   // Helper for day label
-  const getDayLabel = (date, idx, todayIdx) => {
-    if (idx === todayIdx) return 'Today';
+  const getDayLabel = (date, idx) => {
     const d = new Date(date);
-    return d.toLocaleDateString(undefined, { weekday: 'short' });
+    const dayIdx = d.getDay();
+    if (dayIdx === todayDayOfWeek) return 'Today';
+    return DAYS_LABELS[dayIdx];
   };
+
+  // Get today's day of week (0=Sunday, 6=Saturday)
+  const todayDayOfWeek = new Date().getDay();
 
   // Helper: find the index of today in hourlyByDay
   const getTodayIdx = () => {
-    const todayStr = new Date().toISOString().slice(0, 10);
-    return hourlyByDay.findIndex(d => d.date === todayStr);
+    // Find the first day in hourlyByDay that matches today's day of week
+    return hourlyByDay.findIndex(d => {
+      const dayIdx = new Date(d.date).getDay();
+      return dayIdx === todayDayOfWeek;
+    });
   };
 
   const todayIdx = getTodayIdx();
@@ -168,32 +191,36 @@ function App() {
       {hourlyByDay.length > 0 && (
         <div className="multi-day-forecast">
           <div className="day-selector">
-            {hourlyByDay.map((d, idx) => (
-              <button
-                key={d.date}
-                className={selectedDay === idx ? 'active' : ''}
-                onClick={() => setSelectedDay(idx)}
-                style={{
-                  marginRight: 8,
-                  marginBottom: 8,
-                  padding: '0.5rem 1rem',
-                  borderRadius: 8,
-                  border: 'none',
-                  background: selectedDay === idx ? '#2563eb' : '#f3f4f6',
-                  color: selectedDay === idx ? '#fff' : '#222',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  boxShadow: selectedDay === idx ? '0 2px 8px #2563eb22' : 'none',
-                  transition: 'background 0.2s, color 0.2s',
-                }}
-              >
-                {getDayLabel(d.date, idx, todayIdx)}
-              </button>
-            ))}
+            {hourlyByDay.map((d, idx) => {
+              const dayIdx = new Date(d.date).getDay();
+              const isToday = dayIdx === todayDayOfWeek;
+              return (
+                <button
+                  key={d.date}
+                  className={selectedDay === idx ? 'active' : ''}
+                  onClick={() => setSelectedDay(idx)}
+                  style={{
+                    marginRight: 8,
+                    marginBottom: 8,
+                    padding: '0.5rem 1rem',
+                    borderRadius: 8,
+                    border: 'none',
+                    background: selectedDay === idx ? '#2563eb' : isToday ? '#e0e7ff' : '#f3f4f6',
+                    color: selectedDay === idx ? '#fff' : isToday ? '#2563eb' : '#222',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    boxShadow: selectedDay === idx ? '0 2px 8px #2563eb22' : 'none',
+                    transition: 'background 0.2s, color 0.2s',
+                  }}
+                >
+                  {getDayLabel(d.date, idx)}
+                </button>
+              );
+            })}
           </div>
           <div className="hourly-list">
             <h3 style={{marginTop: '1rem', marginBottom: '0.5rem'}}>
-              Hourly Temperature & Precipitation ({getDayLabel(hourlyByDay[selectedDay].date, selectedDay, todayIdx)})
+              Hourly Temperature & Precipitation ({getDayLabel(hourlyByDay[selectedDay].date, selectedDay)})
             </h3>
             <ul style={{listStyle: 'none', padding: 0, margin: 0}}>
               {(() => {
