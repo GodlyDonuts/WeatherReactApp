@@ -103,11 +103,19 @@ function App() {
   };
 
   // Helper for day label
-  const getDayLabel = (date, idx) => {
-    if (idx === 0) return 'Today';
+  const getDayLabel = (date, idx, todayIdx) => {
+    if (idx === todayIdx) return 'Today';
     const d = new Date(date);
     return d.toLocaleDateString(undefined, { weekday: 'short' });
   };
+
+  // Helper: find the index of today in hourlyByDay
+  const getTodayIdx = () => {
+    const todayStr = new Date().toISOString().slice(0, 10);
+    return hourlyByDay.findIndex(d => d.date === todayStr);
+  };
+
+  const todayIdx = getTodayIdx();
 
   // Helper: mph from m/s
   const msToMph = (ms) => ms * 2.23694;
@@ -179,13 +187,13 @@ function App() {
                   transition: 'background 0.2s, color 0.2s',
                 }}
               >
-                {getDayLabel(d.date, idx)}
+                {getDayLabel(d.date, idx, todayIdx)}
               </button>
             ))}
           </div>
           <div className="hourly-list">
             <h3 style={{marginTop: '1rem', marginBottom: '0.5rem'}}>
-              Hourly Temperature & Precipitation ({getDayLabel(hourlyByDay[selectedDay].date, selectedDay)})
+              Hourly Temperature & Precipitation ({getDayLabel(hourlyByDay[selectedDay].date, selectedDay, todayIdx)})
             </h3>
             <ul style={{listStyle: 'none', padding: 0, margin: 0}}>
               {(() => {
